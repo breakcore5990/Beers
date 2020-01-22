@@ -8,6 +8,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use GuzzleHttp;
 
+const URL_PUNK_API="https://api.punkapi.com/v2/beers";
+
 class ApiController extends AbstractController
 {
     private $beers;
@@ -28,6 +30,7 @@ class ApiController extends AbstractController
         try {
             $response = null;
             $this->beers = json_decode($this->punkQuery($request->get('food')));
+
             if (is_array($this->beers) || is_object($this->beers)) {
                 foreach ($this->beers as $beer) {
                     $response[] = [
@@ -81,10 +84,10 @@ class ApiController extends AbstractController
     public function punkQuery($query)
     {
         $query = strtr($query, ' ', '_');
-        $url = "https://api.punkapi.com/v2/beers";
+        $url = URL_PUNK_API;
         try {
             $request = $this->client->request('GET', $url, [
-                'query' => [$query]
+                'query' => ['food' => $query]
             ]);
             $response = $request->getBody()->getContents();
         } catch (\Exception $e) {
